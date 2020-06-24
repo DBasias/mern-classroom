@@ -7,6 +7,8 @@ import {
   TextField,
   Typography,
   Icon,
+  FormControlLabel,
+  Switch,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import auth from "./../auth/auth-helper";
@@ -48,6 +50,7 @@ export default function EditProfile({ match }) {
     open: false,
     error: "",
     redirectToProfile: false,
+    educator: false,
   });
   const jwt = auth.isAuthenticated();
 
@@ -55,19 +58,20 @@ export default function EditProfile({ match }) {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    read(
-      {
-        userId: match.params.userId,
-      },
-      { t: jwt.token },
-      signal
-    ).then(data => {
-      if (data && data.error) {
-        setValues({ ...values, error: data.error });
-      } else {
-        setValues({ ...values, name: data.name, email: data.email });
+    read({ userId: match.params.userId }, { t: jwt.token }, signal).then(
+      data => {
+        if (data && data.error) {
+          setValues({ ...values, error: data.error });
+        } else {
+          setValues({
+            ...values,
+            name: data.name,
+            email: data.email,
+            educator: data.educator,
+          });
+        }
       }
-    });
+    );
     return function cleanup() {
       abortController.abort();
     };
@@ -78,25 +82,27 @@ export default function EditProfile({ match }) {
       name: values.name || undefined,
       email: values.email || undefined,
       password: values.password || undefined,
+      educator: values.educator || undefined,
     };
-    update(
-      {
-        userId: match.params.userId,
-      },
-      {
-        t: jwt.token,
-      },
-      user
-    ).then(data => {
-      if (data && data.error) {
-        setValues({ ...values, error: data.error });
-      } else {
-        setValues({ ...values, userId: data._id, redirectToProfile: true });
+    update({ userId: match.params.userId }, { t: jwt.token }, user).then(
+      data => {
+        if (data && data.error) {
+          setValues({ ...values, error: data.error });
+        } else {
+          auth.updateUser(data, () => {
+            setValues({ ...values, userId: data._id, redirectToProfile: true });
+          });
+        }
       }
-    });
+    );
   };
+
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const handleCheck = (event, checked) => {
+    setValues({ ...values, educator: checked });
   };
 
   if (values.redirectToProfile) {
@@ -137,6 +143,19 @@ export default function EditProfile({ match }) {
           margin="normal"
         />
         <br />{" "}
+        <Typography variant="subtitle1" className={classes.subheading}>
+          I am an educator
+        </Typography>
+        <FormControlLabel
+          control={
+            <Switch
+              classes={{ checked: classes.checked, bar: classes.bar }}
+              checked={values.educator}
+              onChange={handleCheck}
+            />
+          }
+          label={values.educator ? "Yes" : "No"}
+        />
         {values.error && (
           <Typography component="p" color="error">
             <Icon color="error" className={classes.error}>
