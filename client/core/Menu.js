@@ -7,13 +7,26 @@ import {
   IconButton,
   Button,
 } from "@material-ui/core";
-import { Home as HomeIcon } from "@material-ui/icons";
+import { Home as HomeIcon, LocalLibrary as Library } from "@material-ui/icons";
 import auth from "./../auth/auth-helper";
 
 const isActive = (history, path) => {
   if (history.location.pathname == path) return { color: "#ff4081" };
   else return { color: "#ffffff" };
 };
+
+const isPartActive = (history, path) => {
+  if (history.location.pathname.includes(path))
+    return { color: "#fffde7", backgroundColor: "#f57c00", marginRight: 10 };
+  else
+    return {
+      color: "#616161",
+      backgroundColor: "#fffde7",
+      border: "1px solid #f57c00",
+      marginRight: 10,
+    };
+};
+
 const Menu = withRouter(({ history }) => (
   <AppBar position="static">
     <Toolbar>
@@ -40,6 +53,14 @@ const Menu = withRouter(({ history }) => (
       )}
       {auth.isAuthenticated() && (
         <span>
+          {auth.isAuthenticated().user.educator && (
+            <Link to="/teach/courses">
+              <Button style={isPartActive(history, "/teach/")}>
+                <Library />
+                Teach
+              </Button>
+            </Link>
+          )}
           <Link to={"/user/" + auth.isAuthenticated().user._id}>
             <Button
               style={isActive(
