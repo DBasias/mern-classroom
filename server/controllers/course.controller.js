@@ -2,6 +2,7 @@ import fs from "fs";
 import formidable from "formidable";
 import Course from "../models/course.model";
 import dbErrorHandler from "../helpers/dbErrorHandler";
+import defaultImage from "../../client/assets/images/default.png";
 
 const create = (req, res) => {
   let form = new formidable.IncomingForm();
@@ -33,4 +34,36 @@ const create = (req, res) => {
   });
 };
 
-export default { create };
+const photo = (req, res, next) => {
+  if (req.course.image.data) {
+    res.set("Content-Type", req.course.image.contentType);
+    return res.send(req.course.image.data);
+  }
+
+  next();
+};
+
+const defaultPhoto = (req, res) => {
+  return res.sendFile(process.cwd() + defaultImage);
+};
+
+/**
+ * Load course and append to req.
+ */
+const courseByID = async (req, res, next, id) => {
+  try {
+    let course = await Course.findById(id).populate("instructor", "_id name");
+    if (!course)
+      return res.status("400").json({
+        error: "Course not found",
+      });
+    req.course = course;
+    next();
+  } catch (err) {
+    return res.status("400").json({
+      error: "Could not retrieve course",
+    });
+  }
+};
+
+export default { create, courseByID };

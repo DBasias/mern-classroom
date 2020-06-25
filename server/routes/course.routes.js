@@ -14,6 +14,11 @@ router
     courseCtrl.create
   );
 
+router
+  .route("/api/courses/photo/:courseId")
+  .get(courseCtrl.photo, courseCtrl.defaultPhoto);
+
+router.param("courseId", courseCtrl.courseById);
 router.param("userId", userCtrl.userByID);
 
 export default router;
