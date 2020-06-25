@@ -66,4 +66,4 @@ const courseByID = async (req, res, next, id) => {
   }
 };
 
-export default { create, courseByID };
+export default { create, courseByID, photo, defaultPhoto };
