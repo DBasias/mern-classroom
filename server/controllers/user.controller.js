@@ -17,25 +17,6 @@ const create = async (req, res) => {
   }
 };
 
-/**
- * Load user and append to req.
- */
-const userByID = async (req, res, next, id) => {
-  try {
-    let user = await User.findById(id);
-    if (!user)
-      return res.status("400").json({
-        error: "User not found",
-      });
-    req.profile = user;
-    next();
-  } catch (err) {
-    return res.status("400").json({
-      error: "Could not retrieve user",
-    });
-  }
-};
-
 const read = (req, res) => {
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
@@ -83,6 +64,37 @@ const remove = async (req, res) => {
   }
 };
 
+const isEducator = (req, res, next) => {
+  const isEducator = req.profile && req.profile.educator;
+
+  if (!isEducator) {
+    return res.status(403).json({
+      error: "User is not an educator",
+    });
+  }
+
+  next();
+};
+
+/**
+ * Load user and append to req.
+ */
+const userByID = async (req, res, next, id) => {
+  try {
+    let user = await User.findById(id);
+    if (!user)
+      return res.status("400").json({
+        error: "User not found",
+      });
+    req.profile = user;
+    next();
+  } catch (err) {
+    return res.status("400").json({
+      error: "Could not retrieve user",
+    });
+  }
+};
+
 export default {
   create,
   userByID,
@@ -90,4 +102,5 @@ export default {
   list,
   remove,
   update,
+  isEducator,
 };
