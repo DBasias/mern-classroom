@@ -12,6 +12,11 @@ router
     authCtrl.hasAuthorization,
     userCtrl.isEducator,
     courseCtrl.create
+  )
+  .get(
+    authCtrl.requireSignin,
+    authCtrl.hasAuthorization,
+    courseCtrl.listByInstructor
   );
 
 router

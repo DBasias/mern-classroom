@@ -34,6 +34,18 @@ const create = (req, res) => {
   });
 };
 
+const listByInstructor = (req, res) => {
+  Course.find({ instructor: req.profile._id }, (err, courses) => {
+    if (err) {
+      return res.status(400).json({
+        error: dbErrorHandler.getErrorMessage(err),
+      });
+    }
+
+    res.json(courses);
+  }).populate("instructor", "_id name");
+};
+
 const photo = (req, res, next) => {
   if (req.course.image.data) {
     res.set("Content-Type", req.course.image.contentType);
@@ -66,4 +78,4 @@ const courseByID = async (req, res, next, id) => {
   }
 };
 
-export default { create, courseByID, photo, defaultPhoto };
+export default { create, courseByID, photo, defaultPhoto, listByInstructor };
