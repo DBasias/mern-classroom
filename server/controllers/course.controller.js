@@ -20,7 +20,7 @@ const create = (req, res) => {
 
     if (files.image) {
       course.image.data = fs.readFileSync(files.image.path);
-      course.image.contentType = file.image.type;
+      course.image.contentType = files.image.type;
     }
 
     try {

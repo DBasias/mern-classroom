@@ -106,7 +106,7 @@ export default function NewCourse() {
               Upload Photo
               <FileUpload />
             </Button>
-          </label>{" "}
+          </label>
           <span className={classes.filename}>
             {values.image ? values.image.name : ""}
           </span>

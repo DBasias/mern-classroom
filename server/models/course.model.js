@@ -11,7 +11,7 @@ const CourseSchema = new mongoose.Schema({
     trim: true,
   },
   image: {
-    type: Buffer,
+    data: Buffer,
     contentType: String,
   },
   category: {
