@@ -23,6 +23,8 @@ router
   .route("/api/courses/photo/:courseId")
   .get(courseCtrl.photo, courseCtrl.defaultPhoto);
 
+router.route("/api/courses/:courseId").get(courseCtrl.read);
+
 router.param("courseId", courseCtrl.courseByID);
 router.param("userId", userCtrl.userByID);
 

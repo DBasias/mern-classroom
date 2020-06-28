@@ -46,6 +46,11 @@ const listByInstructor = (req, res) => {
   }).populate("instructor", "_id name");
 };
 
+const read = (req, res) => {
+  req.course.image = undefined;
+  return res.json(req.course);
+};
+
 const photo = (req, res, next) => {
   if (req.course.image.data) {
     res.set("Content-Type", req.course.image.contentType);
@@ -65,17 +70,28 @@ const defaultPhoto = (req, res) => {
 const courseByID = async (req, res, next, id) => {
   try {
     let course = await Course.findById(id).populate("instructor", "_id name");
-    if (!course)
+
+    if (!course) {
       return res.status("400").json({
         error: "Course not found",
       });
+    }
+
     req.course = course;
+
     next();
   } catch (err) {
-    return res.status("400").json({
+    return res.status(400).json({
       error: "Could not retrieve course",
     });
   }
 };
 
-export default { create, courseByID, photo, defaultPhoto, listByInstructor };
+export default {
+  create,
+  courseByID,
+  photo,
+  defaultPhoto,
+  listByInstructor,
+  read,
+};

@@ -15,6 +15,23 @@ const create = async (params, credentials, course) => {
   }
 };
 
+const read = async (params, signal) => {
+  try {
+    let response = await fetch("/api/courses/" + params.courseId, {
+      method: "GET",
+      signal: signal,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const listByInstructor = async (params, credentials, signal) => {
   try {
     let response = await fetch("/api/courses/by/" + params.userId, {
