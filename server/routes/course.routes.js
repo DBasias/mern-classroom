@@ -22,6 +22,7 @@ router
 router
   .route("/api/courses/photo/:courseId")
   .get(courseCtrl.photo, courseCtrl.defaultPhoto);
+router.route("/api/courses/defaultphoto").get(courseCtrl.defaultPhoto);
 
 router.route("/api/courses/:courseId").get(courseCtrl.read);
 
