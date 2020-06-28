@@ -83,7 +83,7 @@ export default function NewCourse() {
   };
 
   if (values.redirect) {
-    return <Redirect to={"/seller/courses"} />;
+    return <Redirect to={"/teach/courses"} />;
   }
 
   return (

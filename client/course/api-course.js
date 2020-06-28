@@ -49,4 +49,4 @@ const listByInstructor = async (params, credentials, signal) => {
   }
 };
 
-export { create, listByInstructor };
+export { create, listByInstructor, read };

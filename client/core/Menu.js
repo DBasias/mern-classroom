@@ -54,7 +54,7 @@ const Menu = withRouter(({ history }) => (
       {auth.isAuthenticated() && (
         <span>
           {auth.isAuthenticated().user.educator && (
-            <Link to="/seller/courses">
+            <Link to="/teach/courses">
               <Button style={isPartActive(history, "/teach/")}>
                 <Library />
                 Teach
