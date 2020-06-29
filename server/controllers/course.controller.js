@@ -85,7 +85,7 @@ const newLesson = async (req, res) => {
 
 const isInstructor = (req, res, next) => {
   const isInstructor =
-    req.course && req.auth && req.course.instructor._id === req.auth._id;
+    req.course && req.auth && req.course.instructor._id == req.auth._id;
 
   if (!isInstructor) {
     return res.status(403).json({

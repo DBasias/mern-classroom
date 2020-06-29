@@ -7,10 +7,12 @@ import {
   CardMedia,
   Typography,
   IconButton,
+  Divider,
 } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { read } from "./api-course";
 import auth from "./../auth/auth-helper";
+import NewLesson from "./NewLesson";
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -79,6 +81,10 @@ export default function Course({ match }) {
     };
   }, [match.params.courseId]);
 
+  const addLesson = course => {
+    setCourse(course);
+  };
+
   const imageUrl = course._id
     ? `/api/courses/photo/${course._id}?${new Date().getTime()}`
     : "/api/courses/defaultphoto";
@@ -114,16 +120,42 @@ export default function Course({ match }) {
             </>
           }
         />
-        <CardMedia
-          className={classes.media}
-          image={imageUrl}
-          title={course.name}
-        />
-        <div className={classes.details}>
-          <Typography variant="body1" className={classes.subheading}>
-            {course.description}
-            <br />
-          </Typography>
+        <div className={classes.flex}>
+          <CardMedia
+            className={classes.media}
+            image={imageUrl}
+            title={course.name}
+          />
+          <div className={classes.details}>
+            <Typography variant="body1" className={classes.subheading}>
+              {course.description}
+              <br />
+            </Typography>
+          </div>
+        </div>
+        <Divider />
+        <div>
+          <CardHeader
+            title={
+              <Typography variant="h6" className={classes.subheading}>
+                Lessons
+              </Typography>
+            }
+            subheader={
+              <Typography variant="body1" className={classes.subheading}>
+                {course.lessons && course.lessons.length} lessons
+              </Typography>
+            }
+            action={
+              auth.isAuthenticated().user &&
+              auth.isAuthenticated().user._id === course.instructor._id &&
+              !course.published && (
+                <span className={classes.action}>
+                  <NewLesson courseId={course._id} addLesson={addLesson} />
+                </span>
+              )
+            }
+          />
         </div>
       </Card>
     </div>
