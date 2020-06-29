@@ -64,6 +64,38 @@ const defaultPhoto = (req, res) => {
   return res.sendFile(process.cwd() + defaultImage);
 };
 
+const newLesson = async (req, res) => {
+  try {
+    let lesson = req.body.lesson;
+    let result = await Course.findByIdAndUpdate(
+      req.course._id,
+      { $push: { lessons: lesson }, updated: Date.now() },
+      { new: true }
+    )
+      .populate("instructor", "_id name")
+      .exec();
+
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err),
+    });
+  }
+};
+
+const isInstructor = (req, res, next) => {
+  const isInstructor =
+    req.course && req.auth && req.course.instructor._id === req.auth._id;
+
+  if (!isInstructor) {
+    return res.status(403).json({
+      error: "User is not authorized",
+    });
+  }
+
+  next();
+};
+
 /**
  * Load course and append to req.
  */
@@ -94,4 +126,6 @@ export default {
   defaultPhoto,
   listByInstructor,
   read,
+  isInstructor,
+  newLesson,
 };
