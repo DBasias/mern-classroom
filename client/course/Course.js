@@ -8,6 +8,11 @@ import {
   Typography,
   IconButton,
   Divider,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
 } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { read } from "./api-course";
@@ -156,6 +161,22 @@ export default function Course({ match }) {
               )
             }
           />
+          <List>
+            {course.lessons &&
+              course.lessons.map((lesson, i) => {
+                return (
+                  <span key={i}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar>{i + 1}</Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={lesson.title} />
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </span>
+                );
+              })}
+          </List>
         </div>
       </Card>
     </div>
