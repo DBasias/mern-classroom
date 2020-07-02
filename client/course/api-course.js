@@ -32,6 +32,23 @@ const read = async (params, signal) => {
   }
 };
 
+const update = async (params, credentials, course) => {
+  try {
+    let response = await fetch("/api/courses/" + params.courseId, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      body: course,
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const listByInstructor = async (params, credentials, signal) => {
   try {
     let response = await fetch("/api/courses/by/" + params.userId, {
@@ -70,4 +87,4 @@ const newLesson = async (params, credentials, lesson) => {
   }
 };
 
-export { create, listByInstructor, read, newLesson };
+export { create, listByInstructor, read, newLesson, update };

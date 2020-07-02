@@ -28,7 +28,10 @@ router
   .route("/api/courses/:courseId/lesson/new")
   .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.newLesson);
 
-router.route("/api/courses/:courseId").get(courseCtrl.read);
+router
+  .route("/api/courses/:courseId")
+  .get(courseCtrl.read)
+  .put(authCtrl.requireSignin, courseCtrl.isInstructor, courseCtrl.update);
 
 router.param("courseId", courseCtrl.courseByID);
 router.param("userId", userCtrl.userByID);

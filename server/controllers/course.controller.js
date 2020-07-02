@@ -1,5 +1,6 @@
 import fs from "fs";
 import formidable from "formidable";
+import { extend } from "lodash";
 import Course from "../models/course.model";
 import dbErrorHandler from "../helpers/dbErrorHandler";
 import defaultImage from "../../client/assets/images/default.png";
@@ -26,6 +27,42 @@ const create = (req, res) => {
     try {
       let result = await course.save();
       res.json(result);
+    } catch (err) {
+      return res.status(400).json({
+        error: dbErrorHandler.getErrorMessage(err),
+      });
+    }
+  });
+};
+
+const update = (req, res) => {
+  let form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({
+        error: "Photo could not be uploaded",
+      });
+    }
+
+    let course = req.course;
+    course = extend(course, fields);
+
+    if (fields.lessons) {
+      course.lessons = JSON.parse(fields.lessons);
+    }
+
+    course.updated = Date.now();
+
+    if (files.image) {
+      course.image.data = fs.readFileSync(files.image.path);
+      course.image.contentType = files.image.type;
+    }
+
+    try {
+      await course.save();
+      res.json(course);
     } catch (err) {
       return res.status(400).json({
         error: dbErrorHandler.getErrorMessage(err),
@@ -121,6 +158,7 @@ const courseByID = async (req, res, next, id) => {
 
 export default {
   create,
+  update,
   courseByID,
   photo,
   defaultPhoto,
