@@ -51,7 +51,7 @@ const update = async (params, credentials, course) => {
 
 const remove = async (params, credentials) => {
   try {
-    let response = await fetch("/api/course/" + params.courseId, {
+    let response = await fetch("/api/courses/" + params.courseId, {
       method: "DELETE",
       headers: {
         Accept: "application/json",

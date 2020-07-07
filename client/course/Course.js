@@ -18,6 +18,7 @@ import { Edit } from "@material-ui/icons";
 import { read } from "./api-course";
 import auth from "./../auth/auth-helper";
 import NewLesson from "./NewLesson";
+import DeleteCourse from "./DeleteCourse";
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -66,6 +67,7 @@ export default function Course({ match }) {
   const classes = useStyles();
   const [course, setCourse] = useState({ instructor: {} });
   const [values, setValues] = useState({
+    redirect: false,
     error: "",
   });
 
@@ -89,6 +91,14 @@ export default function Course({ match }) {
   const addLesson = course => {
     setCourse(course);
   };
+
+  const removeCourse = course => {
+    setValues({ ...values, redirect: true });
+  };
+
+  if (values.redirect) {
+    return <Redirect to={"/teach/courses"} />;
+  }
 
   const imageUrl = course._id
     ? `/api/courses/photo/${course._id}?${new Date().getTime()}`
@@ -120,6 +130,7 @@ export default function Course({ match }) {
                         <Edit />
                       </IconButton>
                     </Link>
+                    <DeleteCourse course={course} onRemove={removeCourse} />
                   </span>
                 )}
             </>
