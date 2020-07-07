@@ -49,6 +49,23 @@ const update = async (params, credentials, course) => {
   }
 };
 
+const remove = async (params, credentials) => {
+  try {
+    let response = await fetch("/api/course/" + params.courseId, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const listByInstructor = async (params, credentials, signal) => {
   try {
     let response = await fetch("/api/courses/by/" + params.userId, {
@@ -87,4 +104,4 @@ const newLesson = async (params, credentials, lesson) => {
   }
 };
 
-export { create, listByInstructor, read, newLesson, update };
+export { create, listByInstructor, read, newLesson, update, remove };

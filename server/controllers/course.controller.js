@@ -88,6 +88,19 @@ const read = (req, res) => {
   return res.json(req.course);
 };
 
+const remove = async (req, res) => {
+  try {
+    let course = req.course;
+    let deletedCourse = await course.remove();
+
+    res.json(deletedCourse);
+  } catch (err) {
+    res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err),
+    });
+  }
+};
+
 const photo = (req, res, next) => {
   if (req.course.image.data) {
     res.set("Content-Type", req.course.image.contentType);
@@ -166,4 +179,5 @@ export default {
   read,
   isInstructor,
   newLesson,
+  remove,
 };
