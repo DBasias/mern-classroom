@@ -13,9 +13,14 @@ import {
   ListItemAvatar,
   Avatar,
   ListItemText,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
-import { read } from "./api-course";
+import { read, update } from "./api-course";
 import auth from "./../auth/auth-helper";
 import NewLesson from "./NewLesson";
 import DeleteCourse from "./DeleteCourse";
@@ -70,6 +75,8 @@ export default function Course({ match }) {
     redirect: false,
     error: "",
   });
+  const [open, setOpen] = useState(false);
+  const jwt = auth.isAuthenticated();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -94,6 +101,34 @@ export default function Course({ match }) {
 
   const removeCourse = course => {
     setValues({ ...values, redirect: true });
+  };
+
+  const clickPublish = () => {
+    if (course.lessons.length > 0) {
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const publish = () => {
+    let courseData = new FormData();
+    courseData.append("published", true);
+
+    update(
+      { courseId: match.params.courseId },
+      { t: jwt.token },
+      courseData
+    ).then(data => {
+      if (data && data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setCourse({ ...course, published: true });
+        setOpen(false);
+      }
+    });
   };
 
   if (values.redirect) {
@@ -130,7 +165,24 @@ export default function Course({ match }) {
                         <Edit />
                       </IconButton>
                     </Link>
-                    <DeleteCourse course={course} onRemove={removeCourse} />
+                    {!course.published ? (
+                      <>
+                        <Button
+                          color="secondary"
+                          variant="outlined"
+                          onClick={clickPublish}
+                        >
+                          {course.lessons.length == 0
+                            ? "Add at least 1 lesson to publish"
+                            : "Publish"}
+                        </Button>
+                        <DeleteCourse course={course} onRemove={removeCourse} />
+                      </>
+                    ) : (
+                      <Button color="primary" variant="outlined">
+                        Published
+                      </Button>
+                    )}
                   </span>
                 )}
             </>
@@ -190,6 +242,29 @@ export default function Course({ match }) {
           </List>
         </div>
       </Card>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">Publish Course</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Publishing your course will make it live to students for enrollment.
+          </Typography>
+          <Typography variant="body1">
+            Make sure all lessons are added and ready for publishing.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary" variant="contained">
+            Cancel
+          </Button>
+          <Button onClick={publish} color="secondary" variant="contained">
+            Publish
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
