@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, CardContent, CardMedia, Typography } from "@material-ui/core";
 import unicornbikeImg from "./../assets/images/unicornbike.jpg";
+import { listPublished } from "./../course/api-course";
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -32,6 +33,25 @@ const useStyles = makeStyles(theme => ({
 
 export default function Home() {
   const classes = useStyles();
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    listPublished(signal).then(data => {
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setCourses(data);
+      }
+    });
+
+    return function cleanup() {
+      abortController.abort();
+    };
+  }, []);
+
   return (
     <Card className={classes.card}>
       <Typography variant="h6" className={classes.title}>
