@@ -83,6 +83,18 @@ const listByInstructor = (req, res) => {
   }).populate("instructor", "_id name");
 };
 
+const listPublished = (req, res) => {
+  Course.find({ published: true }, (err, courses) => {
+    if (err) {
+      return res.status(400).json({
+        error: dbErrorHandler.getErrorMessage(err),
+      });
+    }
+
+    res.json(courses);
+  }).populate("instructor", "_id name");
+};
+
 const read = (req, res) => {
   req.course.image = undefined;
   return res.json(req.course);
@@ -180,4 +192,5 @@ export default {
   isInstructor,
   newLesson,
   remove,
+  listPublished,
 };

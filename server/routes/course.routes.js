@@ -19,6 +19,8 @@ router
     courseCtrl.listByInstructor
   );
 
+router.route("/api/courses/published").get(courseCtrl.listPublished);
+
 router
   .route("/api/courses/photo/:courseId")
   .get(courseCtrl.photo, courseCtrl.defaultPhoto);

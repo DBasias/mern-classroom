@@ -83,6 +83,23 @@ const listByInstructor = async (params, credentials, signal) => {
   }
 };
 
+const listPublished = async signal => {
+  try {
+    let response = await fetch("/api/courses/published", {
+      method: "GET",
+      signal: signal,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const newLesson = async (params, credentials, lesson) => {
   try {
     let response = await fetch(
@@ -104,4 +121,12 @@ const newLesson = async (params, credentials, lesson) => {
   }
 };
 
-export { create, listByInstructor, read, newLesson, update, remove };
+export {
+  create,
+  listByInstructor,
+  read,
+  newLesson,
+  update,
+  remove,
+  listPublished,
+};
