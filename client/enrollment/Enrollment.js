@@ -22,7 +22,7 @@ import {
   RadioButtonUnchecked as RadioButtonUncheckedIcon,
 } from "@material-ui/icons";
 import auth from "./../auth/auth-helper";
-import { read } from "./api-enrollment";
+import { read, complete } from "./api-enrollment";
 
 const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
@@ -129,6 +129,7 @@ export default function Enrollment({ match }) {
     error: "",
     drawer: -1,
   });
+  const [totalComplete, setTotalComplete] = useState(0);
   const jwt = auth.isAuthenticated();
 
   useEffect(() => {
@@ -154,6 +155,44 @@ export default function Enrollment({ match }) {
 
   const selectDrawer = index => event => {
     setValues({ ...values, drawer: index });
+  };
+
+  const totalCompleted = lessons => {
+    let count = lessons.reduce((total, lessonStatus) => {
+      return total + (lessonStatus.complete ? 1 : 0);
+    }, 0);
+
+    setTotalComplete(count);
+
+    return count;
+  };
+
+  const markComplete = () => {
+    if (!enrollment.lessonStatus[values.drawer].complete) {
+      const lessonStatus = enrollment.lessonStatus;
+      lessonStatus[values.drawer].complete = true;
+      let count = totalCompleted(lessonStatus);
+      let updatedData = {};
+
+      updatedData.lessonStatusId = lessonStatus[values.drawer]._id;
+      updatedData.complete = true;
+
+      if (count == lessonStatus.length) {
+        updatedData.courseCompleted = Date.now();
+      }
+
+      complete(
+        { enrollmentId: match.params.enrollmentId },
+        { t: jwt.token },
+        updatedData
+      ).then(data => {
+        if (data && data.error) {
+          setValues({ ...values, error: data.error });
+        } else {
+          setEnrollment({ ...enrollment, lessonStatus: lessonStatus });
+        }
+      });
+    }
   };
 
   return (
@@ -212,10 +251,27 @@ export default function Enrollment({ match }) {
       </Drawer>
       {values.drawer != -1 && (
         <>
-          <Typography variant="h5">{enrollment.course.name}</Typography>
-          <Card>
+          <Typography variant="h5" className={classes.heading}>
+            {enrollment.course.name}
+          </Typography>
+          <Card className={classes.card}>
             <CardHeader
               title={enrollment.course.lessons[values.drawer].title}
+              action={
+                <Button
+                  onClick={markComplete}
+                  variant={
+                    enrollment.lessonStatus[values.drawer].complete
+                      ? "contained"
+                      : "outlined"
+                  }
+                  color="secondary"
+                >
+                  {enrollment.lessonStatus[values.drawer].complete
+                    ? "Completed"
+                    : "Mark as complete"}
+                </Button>
+              }
             />
             <CardContent>
               <Typography variant="body1">
