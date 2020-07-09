@@ -14,6 +14,14 @@ router
   );
 
 router
+  .route("/api/enrollment/complete/:enrollmentId")
+  .put(
+    authCtrl.requireSignin,
+    enrollmentCtrl.isStudent,
+    enrollmentCtrl.complete
+  );
+
+router
   .route("/api/enrollment/:enrollmentId")
   .get(authCtrl.requireSignin, enrollmentCtrl.isStudent, enrollmentCtrl.read);
 
