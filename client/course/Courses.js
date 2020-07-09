@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { GridList, GridListTile, GridListTileBar } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import auth from "./../auth/auth-helper";
+import Enroll from "./../enrollment/Enroll";
 
 export default function Courses(props) {
   return (
