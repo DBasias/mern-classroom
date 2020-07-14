@@ -35,6 +35,23 @@ const read = async (params, credentials, signal) => {
   }
 };
 
+const listEnrolled = async (credentials, signal) => {
+  try {
+    let response = await fetch("/api/enrollment/enrolled", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      signal: signal,
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const complete = async (params, credentials, enrollment) => {
   try {
     let response = await fetch(
@@ -56,4 +73,4 @@ const complete = async (params, credentials, enrollment) => {
   }
 };
 
-export { create, read, complete };
+export { create, read, complete, listEnrolled };

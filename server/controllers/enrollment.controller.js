@@ -69,6 +69,20 @@ const complete = async (req, res) => {
   }
 };
 
+const listEnrolled = async (req, res) => {
+  try {
+    let enrollments = await Enrollment.find({ student: req.auth._id })
+      .sort({ completed: 1 })
+      .populate("course", "_id name category");
+
+    res.json(enrollments);
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err),
+    });
+  }
+};
+
 const isStudent = (req, res, next) => {
   const isStudent = req.auth && req.auth._id === req.enrollment.student._id;
 
@@ -111,4 +125,5 @@ export default {
   isStudent,
   read,
   complete,
+  listEnrolled,
 };

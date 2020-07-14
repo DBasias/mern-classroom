@@ -22,6 +22,10 @@ router
   );
 
 router
+  .route("/api/enrollment/enrolled")
+  .get(authCtrl.requireSignin, enrollmentCtrl.listEnrolled);
+
+router
   .route("/api/enrollment/:enrollmentId")
   .get(authCtrl.requireSignin, enrollmentCtrl.isStudent, enrollmentCtrl.read);
 
