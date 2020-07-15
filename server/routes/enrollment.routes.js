@@ -26,6 +26,10 @@ router
   .get(authCtrl.requireSignin, enrollmentCtrl.listEnrolled);
 
 router
+  .route("/api/enrollment/stats/:courseId")
+  .get(enrollmentCtrl.enrollmentStats);
+
+router
   .route("/api/enrollment/:enrollmentId")
   .get(authCtrl.requireSignin, enrollmentCtrl.isStudent, enrollmentCtrl.read);
 

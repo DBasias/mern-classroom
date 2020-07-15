@@ -83,6 +83,24 @@ const listEnrolled = async (req, res) => {
   }
 };
 
+const enrollmentStats = async (req, res) => {
+  try {
+    let stats = {};
+    stats.totalEnrolled = await Enrollment.find({
+      course: req.course._id,
+    }).countDocuments();
+    stats.totalCompleted = await Enrollment.find({ course: req.course._id })
+      .exists("completed", true)
+      .countDocuments();
+
+    res.json(stats);
+  } catch (err) {
+    return res.status(400).json({
+      error: dbErrorHandler.getErrorMessage(err),
+    });
+  }
+};
+
 const isStudent = (req, res, next) => {
   const isStudent = req.auth && req.auth._id === req.enrollment.student._id;
 
@@ -126,4 +144,5 @@ export default {
   read,
   complete,
   listEnrolled,
+  enrollmentStats,
 };

@@ -52,6 +52,23 @@ const listEnrolled = async (credentials, signal) => {
   }
 };
 
+const enrollmentStats = async (params, credentials, signal) => {
+  try {
+    let response = await fetch("/api/enrollment/stats" + params.courseId, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + credentials.t,
+      },
+      signal: signal,
+    });
+
+    return await response.json();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const complete = async (params, credentials, enrollment) => {
   try {
     let response = await fetch(
