@@ -1,10 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { GridList, GridListTile, GridListTileBar } from "@material-ui/core";
+import {
+  VerifiedUser as CompletedIcon,
+  DonutLarge as InProgressIcon,
+} from "@material-ui/icons";
 import { Link } from "react-router-dom";
-import auth from "./../auth/auth-helper";
-import Enroll from "./../enrollment/Enroll";
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -16,15 +17,17 @@ const useStyles = makeStyles(theme => ({
   media: {
     minHeight: 400,
   },
+  container: {
+    minWidth: "100%",
+    paddingBottom: "14px",
+  },
   gridList: {
     width: "100%",
-    minHeight: 200,
-    padding: "16px 0 0px",
+    minHeight: 100,
+    padding: "12px 0 10px",
   },
   tile: {
     textAlign: "center",
-    border: "1px solid #cecece",
-    backgroundColor: "#04040c",
   },
   image: {
     height: "100%",
@@ -42,51 +45,46 @@ const useStyles = makeStyles(theme => ({
   action: {
     margin: "0 10px",
   },
+  progress: {
+    color: "#b4f8b4",
+  },
 }));
 
-export default function Courses(props) {
+export default function Enrollments(props) {
   const classes = useStyles();
 
   return (
-    <GridList cellHeight={220} cols={2} className={classes.gridList}>
-      {props.courses.map((course, i) => {
-        return (
-          <GridListTile className={classes.tile} key={i} style={{ padding: 0 }}>
-            <Link to={"/course/" + course._id}>
+    <div>
+      <GridList cellHeight={120} className={classes.gridList} cols={4}>
+        {props.enrollments.map((course, i) => (
+          <GridListTile key={i} className={classes.tile}>
+            <Link to={"/learn/" + course._id}>
               <img
                 className={classes.image}
-                src={"/api/course/photo" + course._id}
-                alt={course.name}
+                src={"/api/courses/photo/" + course.course._id}
+                alt={course.course.name}
               />
             </Link>
             <GridListTileBar
               className={classes.tileBar}
               title={
-                <Link
-                  to={"/course/" + course._id}
-                  className={classes.tileTitle}
-                >
-                  {course.name}
+                <Link to={"/learn/" + course._id} className={classes.tileTitle}>
+                  {course.course.name}
                 </Link>
               }
-              subtitle={<span>{course.category}</span>}
               actionIcon={
                 <div className={classes.action}>
-                  {auth.isAuthenticated() ? (
-                    <Enroll courseId={course._id} />
+                  {course.completed ? (
+                    <CompletedIcon color="secondary" />
                   ) : (
-                    <Link to="/signin">Sign in to enroll</Link>
+                    <InProgressIcon className={classes.progress} />
                   )}
                 </div>
               }
             />
           </GridListTile>
-        );
-      })}
-    </GridList>
+        ))}
+      </GridList>
+    </div>
   );
 }
-
-Courses.propTypes = {
-  courses: PropTypes.array.isRequired,
-};
