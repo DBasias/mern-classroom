@@ -90,4 +90,4 @@ const complete = async (params, credentials, enrollment) => {
   }
 };
 
-export { create, read, complete, listEnrolled };
+export { create, read, complete, listEnrolled, enrollmentStats };

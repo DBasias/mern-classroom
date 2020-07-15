@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { read, update } from "./api-course";
+import { enrollmentStats } from "./../enrollment/api-enrollment";
 import auth from "./../auth/auth-helper";
 import NewLesson from "./NewLesson";
 import DeleteCourse from "./DeleteCourse";
@@ -70,6 +71,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Course({ match }) {
   const classes = useStyles();
+  const [stats, setStats] = useState({});
   const [course, setCourse] = useState({ instructor: {} });
   const [values, setValues] = useState({
     redirect: false,
@@ -87,6 +89,27 @@ export default function Course({ match }) {
         setValues({ ...values, error: data.error });
       } else {
         setCourse(data);
+      }
+    });
+
+    return function cleanup() {
+      abortController.abort();
+    };
+  }, [match.params.courseId]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    enrollmentStats(
+      { courseId: match.params.courseId },
+      { t: jwt.token },
+      signal
+    ).then(data => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        setStats(data);
       }
     });
 
@@ -185,6 +208,16 @@ export default function Course({ match }) {
                     )}
                   </span>
                 )}
+              {course.published && (
+                <div>
+                  <span className={classes.statSpan}>
+                    <PeopleIcon /> {stats.totalEnrolled} enrolled
+                  </span>
+                  <span className={classes.statSpan}>
+                    <CompletedIcon /> {stats.totalCompleted} completed
+                  </span>
+                </div>
+              )}
             </>
           }
         />
